@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kr.youngminz.learningmate">
    <application
-        android:label="learningmate"
+        android:label="스터디 메이트"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
