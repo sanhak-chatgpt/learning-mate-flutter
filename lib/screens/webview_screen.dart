@@ -25,7 +25,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         },
       ),
     )
-    ..loadRequest(Uri.parse('https://api.thelearningmate.com'));
+    ..loadRequest(Uri.parse('https://www.thelearningmate.com'));
 
   @override
   Widget build(BuildContext context) {
