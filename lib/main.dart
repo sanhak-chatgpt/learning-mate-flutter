@@ -5,13 +5,15 @@ import 'package:learningmate/screens/webview_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   static const String channelName = 'your_channel_name';
 
-  final MethodChannel _channel = MethodChannel(channelName);
+  final MethodChannel _channel = const MethodChannel(channelName);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class _MyWebViewState extends State<MyWebView> {
         title: const Text('WebView Example'),
       ),
       body: WebView(
-        initialUrl: 'https://your-nextjs-app.com',
+        initialUrl: 'https://www.thelearningmate.com/',
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
           _controller.complete(webViewController);
