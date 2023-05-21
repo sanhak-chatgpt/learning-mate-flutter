@@ -41,42 +41,37 @@ class MyWebView extends StatefulWidget {
 }
 
 class _MyWebViewState extends State<MyWebView> {
-  final Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  late WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(NavigationDelegate())
+      ..loadRequest(Uri.parse('https://www.thelearningmate.com/'))
+      ..addJavaScriptChannel('FlutterBridge', onMessageReceived: (message) {
+        log("bridge message");
+        log(message.message);
+        switch (message.message) {
+          case 'requestMicrophonePermission':
+            requestMicrophone();
+            break;
+          case 'requestOpenStoreListing':
+            openStoreListing();
+            break;
+          default:
+            break;
+        }
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
     log("1231231");
     return Scaffold(
       body: SafeArea(
-        child: WebView(
-          initialUrl: 'https://www.thelearningmate.com/',
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            _controller.complete(webViewController);
-            log("onwebviewcreated");
-          },
-          javascriptChannels: <JavascriptChannel>{
-            JavascriptChannel(
-              name: 'FlutterBridge',
-              onMessageReceived: (JavascriptMessage message) {
-                log("bridge message");
-                log(message.message);
-                switch (message.message) {
-                  case 'requestMicrophonePermission':
-                    requestMicrophone();
-                    break;
-                  case 'requestOpenStoreListing':
-                    openStoreListing();
-                    break;
-                  default:
-                    break;
-                }
-                widget.channel.invokeMethod('your_method_name', message.message);
-              },
-            ),
-          },
-        ),
+        child: WebViewWidget(controller: _controller),
       ),
     );
   }
@@ -87,13 +82,12 @@ class _MyWebViewState extends State<MyWebView> {
     PermissionStatus status = await Permission.microphone.request();
 
     //권한 요청 결과에 따라 front에 message를 보냄
-    final webViewController = await _controller.future;
     log(status.name);
     if (status == PermissionStatus.granted) {
-      webViewController.runJavascript(
+      _controller.runJavaScript(
           'MicrophonePermissionBridge.receiveMessage(\'GRANTED\')');
     } else {
-      webViewController.runJavascript(
+      _controller.runJavaScript(
           'MicrophonePermissionBridge.receiveMessage(\'DENIED\')');
     }
   }
@@ -101,16 +95,15 @@ class _MyWebViewState extends State<MyWebView> {
   Future<void> openStoreListing() async {
     // Flutter 앱에서 openStoreListing을 호출하는 로직을 작성하세요
     final InAppReview inAppReview = InAppReview.instance;
-    final webViewController = await _controller.future;
 
     if (await inAppReview.isAvailable()) {
       InAppReview.instance.openStoreListing(appStoreId: '6449399069');
-      webViewController
-          .runJavascript('OpenStoreListBridge.receiveMessage(\'GRANTED\')');
+      _controller
+          .runJavaScript('OpenStoreListBridge.receiveMessage(\'GRANTED\')');
     } else {
       // In-App Review가 사용 불가능한 경우 처리할 로직 작성
-      webViewController
-          .runJavascript('OpenStoreListBridge.receiveMessage(\'DENIED\')');
+      _controller
+          .runJavaScript('OpenStoreListBridge.receiveMessage(\'DENIED\')');
     }
     //InAppReview.instance.openStoreListing(appStoreId: '1662203668');
   }
