@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:learningmate/screens/webview_screen.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -53,11 +52,11 @@ class _MyWebViewState extends State<MyWebView> {
         onWebViewCreated: (WebViewController webViewController) {
           _controller.complete(webViewController);
         },
-        javascriptChannels: <JavascriptChannel>[
+        javascriptChannels: <JavascriptChannel>{
           JavascriptChannel(
             name: 'FlutterBridge',
             onMessageReceived: (JavascriptMessage message) {
-              switch(message){
+              switch(message.message){
                 case 'requestMicrophonePermission':
                   requestMicrophone();
                   break;
@@ -70,7 +69,7 @@ class _MyWebViewState extends State<MyWebView> {
               widget.channel.invokeMethod('your_method_name', message.message);
             },
           ),
-        ].toSet();,
+        },
       ),
     );
   }
@@ -81,24 +80,24 @@ class _MyWebViewState extends State<MyWebView> {
 
     //권한 요청 결과에 따라 front에 message를 보냄
     final webViewController = await _controller.future;
-    if(status){
-      webViewController.evaluateJavascript('MicrophonePermissionBridge.receiveMessage(${GRANTED})');
+    if(status==PermissionStatus.granted){
+      webViewController.runJavascript('MicrophonePermissionBridge.receiveMessage(\'GRANTED\')');
     }else{
-      webViewController.evaluateJavascript('MicrophonePermissionBridge.receiveMessage(${DENIED})');
+      webViewController.runJavascript('MicrophonePermissionBridge.receiveMessage(\'DENIED\')');
     }
   }
 
-  Future<void> openStoreListing(BuildContext context) async {
+  Future<void> openStoreListing() async {
     // Flutter 앱에서 openStoreListing을 호출하는 로직을 작성하세요
     final InAppReview inAppReview = InAppReview.instance;
     final webViewController = await _controller.future;
 
     if (await inAppReview.isAvailable()) {
       InAppReview.instance.openStoreListing(appStoreId: '6449399069');
-      webViewController.evaluateJavascript('OpenStoreListBridge.receiveMessage(${GRANTED})');
+      webViewController.runJavascript('OpenStoreListBridge.receiveMessage(\'GRANTED\')');
     } else {
     // In-App Review가 사용 불가능한 경우 처리할 로직 작성
-      webViewController.evaluateJavascript('OpenStoreListBridge.receiveMessage(${DENIED})');
+      webViewController.runJavascript('OpenStoreListBridge.receiveMessage(\'DENIED\')');
     }
     //InAppReview.instance.openStoreListing(appStoreId: '1662203668');
   }
