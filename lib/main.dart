@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:in_app_review/in_app_review.dart';
+import 'dart:developer';
 
 void main() {
   runApp(const MyApp());
@@ -12,12 +13,13 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  static const String channelName = 'the_learningmate';
+  static const String channelName = 'FlutterBridge';
 
   final MethodChannel _channel = const MethodChannel(channelName);
 
   @override
   Widget build(BuildContext context) {
+    log("123");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '스터디 메이트',
@@ -42,6 +44,7 @@ class _MyWebViewState extends State<MyWebView> {
 
   @override
   Widget build(BuildContext context) {
+    log("1231231");
     return Scaffold(
       appBar: AppBar(
         title: const Text('WebView Example'),
@@ -51,11 +54,14 @@ class _MyWebViewState extends State<MyWebView> {
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
           _controller.complete(webViewController);
+          log("onwebviewcreated");
         },
         javascriptChannels: <JavascriptChannel>{
           JavascriptChannel(
             name: 'FlutterBridge',
             onMessageReceived: (JavascriptMessage message) {
+              log("bridge message");
+              log(message.message);
               switch(message.message){
                 case 'requestMicrophonePermission':
                   requestMicrophone();
@@ -75,11 +81,13 @@ class _MyWebViewState extends State<MyWebView> {
   }
 
   Future<void> requestMicrophone() async {
+    log("mic fun start");
     // 마이크 권한 요청 코드 작성
     PermissionStatus status = await Permission.microphone.request();
 
     //권한 요청 결과에 따라 front에 message를 보냄
     final webViewController = await _controller.future;
+    log(status.name);
     if(status==PermissionStatus.granted){
       webViewController.runJavascript('MicrophonePermissionBridge.receiveMessage(\'GRANTED\')');
     }else{
