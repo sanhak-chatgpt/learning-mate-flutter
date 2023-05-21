@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "303369191400",
+    "project_id": "learning-mate-8a78c",
+    "storage_bucket": "learning-mate-8a78c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303369191400:android:fc3a3f7fd7b3acdd332e5d",
+        "android_client_info": {
+          "package_name": "kr.youngminz.learningmate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303369191400-vgs6g7rve2it02auocq4f94jbalneop5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYYm6GmD5qiRm82Py_G8o6JMOtp-aS6nE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303369191400-vgs6g7rve2it02auocq4f94jbalneop5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "303369191400-0cg9h4bqjt8p0fqunmv13kpchdg42pu0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kr.youngminz.learningmate"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
