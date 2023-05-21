@@ -94,14 +94,8 @@ class _MyWebViewState extends State<MyWebView> {
     final webViewController = await _controller.future;
 
     if (await inAppReview.isAvailable()) {
-      final bool isOpened = await inAppReview.openStoreListing(appStoreId: '1662203668');
-      if (isOpened) {
-        // 앱 스토어 리뷰 페이지가 성공적으로 열린 경우 처리할 로직 작성
-        webViewController.evaluateJavascript('OpenStoreListBridge.receiveMessage(${GRANTED})');
-      } else {
-        // 앱 스토어 리뷰 페이지를 열지 못한 경우 처리할 로직 작성
-        webViewController.evaluateJavascript('OpenStoreListBridge.receiveMessage(${DENIED})');
-      }
+      InAppReview.instance.openStoreListing(appStoreId: '6449399069');
+      webViewController.evaluateJavascript('OpenStoreListBridge.receiveMessage(${GRANTED})');
     } else {
     // In-App Review가 사용 불가능한 경우 처리할 로직 작성
       webViewController.evaluateJavascript('OpenStoreListBridge.receiveMessage(${DENIED})');
