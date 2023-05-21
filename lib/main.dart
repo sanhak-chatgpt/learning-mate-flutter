@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'dart:developer';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +41,8 @@ class MyWebView extends StatefulWidget {
 }
 
 class _MyWebViewState extends State<MyWebView> {
-  final Completer<WebViewController> _controller = Completer<WebViewController>();
+  final Completer<WebViewController> _controller =
+      Completer<WebViewController>();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,7 @@ class _MyWebViewState extends State<MyWebView> {
             onMessageReceived: (JavascriptMessage message) {
               log("bridge message");
               log(message.message);
-              switch(message.message){
+              switch (message.message) {
                 case 'requestMicrophonePermission':
                   requestMicrophone();
                   break;
@@ -88,10 +90,12 @@ class _MyWebViewState extends State<MyWebView> {
     //권한 요청 결과에 따라 front에 message를 보냄
     final webViewController = await _controller.future;
     log(status.name);
-    if(status==PermissionStatus.granted){
-      webViewController.runJavascript('MicrophonePermissionBridge.receiveMessage(\'GRANTED\')');
-    }else{
-      webViewController.runJavascript('MicrophonePermissionBridge.receiveMessage(\'DENIED\')');
+    if (status == PermissionStatus.granted) {
+      webViewController.runJavascript(
+          'MicrophonePermissionBridge.receiveMessage(\'GRANTED\')');
+    } else {
+      webViewController.runJavascript(
+          'MicrophonePermissionBridge.receiveMessage(\'DENIED\')');
     }
   }
 
@@ -102,10 +106,12 @@ class _MyWebViewState extends State<MyWebView> {
 
     if (await inAppReview.isAvailable()) {
       InAppReview.instance.openStoreListing(appStoreId: '6449399069');
-      webViewController.runJavascript('OpenStoreListBridge.receiveMessage(\'GRANTED\')');
+      webViewController
+          .runJavascript('OpenStoreListBridge.receiveMessage(\'GRANTED\')');
     } else {
-    // In-App Review가 사용 불가능한 경우 처리할 로직 작성
-      webViewController.runJavascript('OpenStoreListBridge.receiveMessage(\'DENIED\')');
+      // In-App Review가 사용 불가능한 경우 처리할 로직 작성
+      webViewController
+          .runJavascript('OpenStoreListBridge.receiveMessage(\'DENIED\')');
     }
     //InAppReview.instance.openStoreListing(appStoreId: '1662203668');
   }
