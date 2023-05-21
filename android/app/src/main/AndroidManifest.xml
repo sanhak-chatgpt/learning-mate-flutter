@@ -1,5 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="kr.youngminz.learningmate">
+   <uses-permission android:name="android.permission.RECORD_AUDIO" />
+   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
    <application
         android:label="스터디 메이트"
         android:name="${applicationName}"
@@ -31,6 +33,4 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 </manifest>
