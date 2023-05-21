@@ -67,9 +67,9 @@ class _MyWebViewState extends State<MyWebView> {
               case 'requestMicrophonePermission':
                 requestMicrophone();
                 break;
-              case 'requestOpenStoreListing':
-                openStoreListing();
-                break;
+              // case 'requestOpenStoreListing':
+              //   openStoreListing();
+              //   break;
               default:
                 break;
             }
