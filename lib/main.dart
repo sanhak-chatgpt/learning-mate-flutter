@@ -81,11 +81,14 @@ class _MyWebViewState extends State<MyWebView> {
   @override
   Widget build(BuildContext context) {
     log("1231231");
-    return Scaffold(
-      body: SafeArea(
-        child: PlatformWebViewWidget(
-                PlatformWebViewWidgetCreationParams(controller: _controller))
-            .build(context),
+    return WillPopScope(
+      onWillPop: () => _exitApp(context),
+      child: Scaffold(
+        body: SafeArea(
+          child: PlatformWebViewWidget(
+                  PlatformWebViewWidgetCreationParams(controller: _controller))
+              .build(context),
+        ),
       ),
     );
   }
@@ -120,5 +123,14 @@ class _MyWebViewState extends State<MyWebView> {
           .runJavaScript('OpenStoreListBridge.receiveMessage(\'DENIED\')');
     }
     //InAppReview.instance.openStoreListing(appStoreId: '1662203668');
+  }
+
+  Future<bool> _exitApp(BuildContext context) async {
+    if (await _controller.canGoBack()) {
+      _controller.goBack();
+      return Future.value(false);
+    } else {
+      return Future.value(true);
+    }
   }
 }
