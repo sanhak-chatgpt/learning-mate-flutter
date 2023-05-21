@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 void main() {
   runApp(const MyApp());
@@ -41,29 +42,40 @@ class MyWebView extends StatefulWidget {
 }
 
 class _MyWebViewState extends State<MyWebView> {
-  late WebViewController _controller;
+  late final PlatformWebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = WebViewController()
+    _controller = PlatformWebViewController(
+      // TODO: iOS
+      AndroidWebViewControllerCreationParams(),
+    )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(NavigationDelegate())
-      ..loadRequest(Uri.parse('https://www.thelearningmate.com/'))
-      ..addJavaScriptChannel('FlutterBridge', onMessageReceived: (message) {
-        log("bridge message");
-        log(message.message);
-        switch (message.message) {
-          case 'requestMicrophonePermission':
-            requestMicrophone();
-            break;
-          case 'requestOpenStoreListing':
-            openStoreListing();
-            break;
-          default:
-            break;
-        }
-      });
+      ..loadRequest(
+          LoadRequestParams(uri: Uri.parse('https://www.thelearningmate.com/')))
+      ..setOnPlatformPermissionRequest((request) {
+        request.grant();
+      })
+      ..addJavaScriptChannel(
+        JavaScriptChannelParams(
+          name: 'FlutterBridge',
+          onMessageReceived: (message) {
+            log("bridge message");
+            log(message.message);
+            switch (message.message) {
+              case 'requestMicrophonePermission':
+                requestMicrophone();
+                break;
+              case 'requestOpenStoreListing':
+                openStoreListing();
+                break;
+              default:
+                break;
+            }
+          },
+        ),
+      );
   }
 
   @override
@@ -71,7 +83,9 @@ class _MyWebViewState extends State<MyWebView> {
     log("1231231");
     return Scaffold(
       body: SafeArea(
-        child: WebViewWidget(controller: _controller),
+        child: PlatformWebViewWidget(
+                PlatformWebViewWidgetCreationParams(controller: _controller))
+            .build(context),
       ),
     );
   }

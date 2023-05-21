@@ -430,7 +430,7 @@ packages:
     source: hosted
     version: "4.2.0"
   webview_flutter_android:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: webview_flutter_android
       sha256: "1acea8def62592123e2fbbca164ed8681a98a890bdcbb88f916d5b4a22687759"
@@ -438,7 +438,7 @@ packages:
     source: hosted
     version: "3.7.0"
   webview_flutter_platform_interface:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: webview_flutter_platform_interface
       sha256: "78715dc442b7849dbde74e92bb67de1cecf5addf95531c5fb474e72f5fe9a507"
