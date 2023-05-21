@@ -48,36 +48,35 @@ class _MyWebViewState extends State<MyWebView> {
   Widget build(BuildContext context) {
     log("1231231");
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('WebView Example'),
-      ),
-      body: WebView(
-        initialUrl: 'https://www.thelearningmate.com/',
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (WebViewController webViewController) {
-          _controller.complete(webViewController);
-          log("onwebviewcreated");
-        },
-        javascriptChannels: <JavascriptChannel>{
-          JavascriptChannel(
-            name: 'FlutterBridge',
-            onMessageReceived: (JavascriptMessage message) {
-              log("bridge message");
-              log(message.message);
-              switch (message.message) {
-                case 'requestMicrophonePermission':
-                  requestMicrophone();
-                  break;
-                case 'requestOpenStoreListing':
-                  openStoreListing();
-                  break;
-                default:
-                  break;
-              }
-              widget.channel.invokeMethod('your_method_name', message.message);
-            },
-          ),
-        },
+      body: SafeArea(
+        child: WebView(
+          initialUrl: 'https://www.thelearningmate.com/',
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (WebViewController webViewController) {
+            _controller.complete(webViewController);
+            log("onwebviewcreated");
+          },
+          javascriptChannels: <JavascriptChannel>{
+            JavascriptChannel(
+              name: 'FlutterBridge',
+              onMessageReceived: (JavascriptMessage message) {
+                log("bridge message");
+                log(message.message);
+                switch (message.message) {
+                  case 'requestMicrophonePermission':
+                    requestMicrophone();
+                    break;
+                  case 'requestOpenStoreListing':
+                    openStoreListing();
+                    break;
+                  default:
+                    break;
+                }
+                widget.channel.invokeMethod('your_method_name', message.message);
+              },
+            ),
+          },
+        ),
       ),
     );
   }
