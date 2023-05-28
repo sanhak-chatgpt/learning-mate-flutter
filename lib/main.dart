@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,8 +12,8 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+
 import 'firebase_options.dart';
 
 void main() async {
@@ -68,8 +71,9 @@ class _MyWebViewState extends State<MyWebView> {
   void initState() {
     super.initState();
     _controller = PlatformWebViewController(
-      // TODO: iOS
-      AndroidWebViewControllerCreationParams(),
+      Platform.isIOS
+          ? WebKitWebViewControllerCreationParams()
+          : AndroidWebViewControllerCreationParams(),
     )
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
