@@ -12,6 +12,7 @@ import 'package:learningmate/services/permission_service.dart';
 import 'package:learningmate/services/review_service.dart';
 
 import 'firebase_options.dart';
+import 'services/push_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ Future<void> initServices() async {
     Get.log("Remote Config 초기화 실패 - $e");
   }
 
+  Get.put(PushService());
   Get.put(ReviewService());
   Get.put(PermissionService());
   Get.put(AdService());
