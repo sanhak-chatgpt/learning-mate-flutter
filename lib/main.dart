@@ -62,17 +62,22 @@ class _MyWebViewState extends State<MyWebView> {
   @override
   void initState() {
     super.initState();
-    _controller = PlatformWebViewController(
-      Platform.isIOS
-          ? WebKitWebViewControllerCreationParams()
-          : AndroidWebViewControllerCreationParams(),
-    )
+
+    if (Platform.isIOS) {
+      _controller =
+          WebKitWebViewController(WebKitWebViewControllerCreationParams())
+            ..setAllowsBackForwardNavigationGestures(true);
+    } else {
+      _controller =
+          AndroidWebViewController(AndroidWebViewControllerCreationParams());
+    }
+
+    _controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
           LoadRequestParams(uri: Uri.parse('https://www.thelearningmate.com/')))
-      ..setOnPlatformPermissionRequest((request) {
-        request.grant();
-      })
+      ..setOnPlatformPermissionRequest((request) => request.grant())
+      ..enableZoom(false)
       ..addJavaScriptChannel(
         JavaScriptChannelParams(
           name: 'FlutterBridge',
@@ -100,8 +105,10 @@ class _MyWebViewState extends State<MyWebView> {
       child: Scaffold(
         body: SafeArea(
           child: PlatformWebViewWidget(
-                  PlatformWebViewWidgetCreationParams(controller: _controller))
-              .build(context),
+            PlatformWebViewWidgetCreationParams(
+              controller: _controller,
+            ),
+          ).build(context),
         ),
       ),
     );
