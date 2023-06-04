@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:in_app_review/in_app_review.dart';
+import 'package:get/get.dart';
+import 'package:learningmate/services/permission_service.dart';
+import 'package:learningmate/services/review_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
@@ -18,6 +20,9 @@ class WebViewScreen extends StatefulWidget {
 
 class _WebViewScreenState extends State<WebViewScreen> {
   late final PlatformWebViewController _controller;
+
+  final _reviewService = Get.find<ReviewService>();
+  final _permissionService = Get.find<PermissionService>();
 
   @override
   void initState() {
@@ -41,14 +46,24 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..addJavaScriptChannel(
         JavaScriptChannelParams(
           name: 'FlutterBridge',
-          onMessageReceived: (message) {
+          onMessageReceived: (message) async {
             log("onMessageReceived: Message is ${message.message}.");
             switch (message.message) {
               case 'requestMicrophonePermission':
-                _requestMicrophone();
+                if (await _permissionService.requestMicrophonePermission() ==
+                    PermissionStatus.granted) {
+                  _controller.runJavaScript(
+                      "MicrophonePermissionBridge.receiveMessage('GRANTED')");
+                } else {
+                  _controller.runJavaScript(
+                      "MicrophonePermissionBridge.receiveMessage('DENIED')");
+                }
                 break;
-              case 'requestOpenStoreListing':
-                _openStoreListing();
+              case 'requestReview':
+                _reviewService.requestReview();
+                break;
+              case 'openStoreListing':
+                _reviewService.openStoreListing();
                 break;
               default:
                 break;
@@ -82,33 +97,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
       return false;
     } else {
       return true;
-    }
-  }
-
-  /// 마이크 권한 요청
-  Future<void> _requestMicrophone() async {
-    log("requestMicrophone: Requesting mic permission...");
-    PermissionStatus status = await Permission.microphone.request();
-    log("requestMicrophone: Permission status is $status.");
-
-    // 권한 요청 결과에 따라 JavaScript 코드 실행
-    if (status == PermissionStatus.granted) {
-      _controller.runJavaScript(
-          "MicrophonePermissionBridge.receiveMessage('GRANTED')");
-    } else {
-      _controller
-          .runJavaScript("MicrophonePermissionBridge.receiveMessage('DENIED')");
-    }
-  }
-
-  /// 스토어 평가 팝업 열기
-  Future<void> _openStoreListing() async {
-    final InAppReview inAppReview = InAppReview.instance;
-
-    log("openStoreListing: Checking if in-app review is available...");
-    if (await inAppReview.isAvailable()) {
-      log("openStoreListing: In-app review is available. Opening store listing...");
-      InAppReview.instance.openStoreListing(appStoreId: '6449399069');
     }
   }
 }
