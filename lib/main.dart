@@ -7,7 +7,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -38,10 +37,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  static const String channelName = 'FlutterBridge';
-
-  final MethodChannel _channel = const MethodChannel(channelName);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,15 +44,13 @@ class MyApp extends StatelessWidget {
       title: '스터디 메이트',
       themeMode: ThemeMode.dark,
       theme: ThemeData(useMaterial3: true),
-      home: MyWebView(channel: _channel),
+      home: MyWebView(),
     );
   }
 }
 
 class MyWebView extends StatefulWidget {
-  final MethodChannel channel;
-
-  const MyWebView({Key? key, required this.channel}) : super(key: key);
+  const MyWebView({Key? key}) : super(key: key);
 
   @override
   State<MyWebView> createState() => _MyWebViewState();
