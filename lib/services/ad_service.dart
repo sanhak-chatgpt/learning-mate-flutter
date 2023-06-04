@@ -32,7 +32,7 @@ class AdService extends GetxService {
   InterstitialAd? _interstitial;
 
   AppOpenAd? _appOpen;
-  bool _isShowingAd = false;
+  bool isShowingAd = false;
   final Duration _maxCacheDuration = const Duration(hours: 4);
   DateTime _appOpenLoadTime = DateTime.now();
 
@@ -137,15 +137,15 @@ class AdService extends GetxService {
   void showInterstitial() {
     _interstitial?.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
-        _isShowingAd = true;
+        isShowingAd = true;
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        _isShowingAd = false;
+        isShowingAd = false;
         ad.dispose();
         _appOpen = null;
       },
       onAdDismissedFullScreenContent: (ad) {
-        _isShowingAd = false;
+        isShowingAd = false;
         ad.dispose();
         _appOpen = null;
       },
@@ -155,7 +155,7 @@ class AdService extends GetxService {
   }
 
   void showAppOpen() {
-    if (_isShowingAd) {
+    if (isShowingAd) {
       return;
     }
 
@@ -166,15 +166,15 @@ class AdService extends GetxService {
     }
     _appOpen?.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
-        _isShowingAd = true;
+        isShowingAd = true;
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        _isShowingAd = false;
+        isShowingAd = false;
         ad.dispose();
         _appOpen = null;
       },
       onAdDismissedFullScreenContent: (ad) {
-        _isShowingAd = false;
+        isShowingAd = false;
         ad.dispose();
         _appOpen = null;
       },

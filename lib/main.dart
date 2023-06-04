@@ -48,8 +48,8 @@ Future<void> initServices() async {
 
   Get.put(PushService());
   Get.put(ReviewService());
-  Get.put(PermissionService());
   Get.put(AdService());
+  Get.put(PermissionService());
 }
 
 class MyApp extends StatelessWidget {
