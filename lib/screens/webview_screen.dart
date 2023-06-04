@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:learningmate/services/ad_service.dart';
 import 'package:learningmate/services/permission_service.dart';
 import 'package:learningmate/services/review_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,9 +22,12 @@ class WebViewScreen extends StatefulWidget {
 
 class _WebViewScreenState extends State<WebViewScreen> {
   late final PlatformWebViewController _controller;
+  BannerAd? myBanner;
+  var isBannerLoaded = false;
 
   final _reviewService = Get.find<ReviewService>();
   final _permissionService = Get.find<PermissionService>();
+  final _adService = Get.find<AdService>();
 
   @override
   void initState() {
@@ -65,26 +70,85 @@ class _WebViewScreenState extends State<WebViewScreen> {
               case 'openStoreListing':
                 _reviewService.openStoreListing();
                 break;
+              case 'showInterstitialAd':
+                _adService.showInterstitial();
+                break;
               default:
                 break;
             }
           },
         ),
       );
+
+    // 배너 광고 처리
+    (() async {
+      // isAttAsked 셋팅될 때까지 대기, 1초 간격 폴링.
+
+      if (myBanner != null) return;
+
+      while (true) {
+        if (_adService.availableForAskingBannerUnitId) break;
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
+      var adUnitId = await _adService.getBannerAdUnitId();
+      if (adUnitId == null) return;
+
+      myBanner = BannerAd(
+        adUnitId: adUnitId,
+        size: AdSize.banner,
+        request: const AdRequest(),
+        listener: BannerAdListener(
+          // Called when an ad is successfully received.
+          onAdLoaded: (Ad ad) {
+            if (!isBannerLoaded) {
+              setState(() {
+                isBannerLoaded = true;
+              });
+            }
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (Ad ad, LoadAdError error) {
+            // Dispose the ad here to free resources.
+            ad.dispose();
+          },
+          // Called when an ad opens an overlay that covers the screen.
+          onAdOpened: (Ad ad) => {},
+          // Called when an ad removes an overlay that covers the screen.
+          onAdClosed: (Ad ad) => {},
+          // Called when an impression occurs on the ad.
+          onAdImpression: (Ad ad) => {},
+        ),
+      )..load();
+    })();
   }
 
   @override
   Widget build(BuildContext context) {
+    final Container adContainer = Container(
+      alignment: Alignment.center,
+      width: AdSize.banner.width.toDouble(),
+      height: AdSize.banner.height.toDouble(),
+      child: isBannerLoaded ? AdWidget(ad: myBanner!) : null,
+    );
+
     return WillPopScope(
       onWillPop: () => _exitApp(context),
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(
-              controller: _controller,
-            ),
-          ).build(context),
+          child: Column(
+            children: [
+              adContainer,
+              Expanded(
+                child: PlatformWebViewWidget(
+                  PlatformWebViewWidgetCreationParams(
+                    controller: _controller,
+                  ),
+                ).build(context),
+              ),
+            ],
+          ),
         ),
       ),
     );
