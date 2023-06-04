@@ -64,20 +64,36 @@ class _WebViewScreenState extends State<WebViewScreen> {
                       "MicrophonePermissionBridge.receiveMessage('DENIED')");
                 }
                 break;
-              case 'requestReview':
-                _reviewService.requestReview();
-                break;
+              // case 'requestReview':
+              //   _reviewService.requestReview();
+              //   break;
               case 'openStoreListing':
                 _reviewService.openStoreListing();
                 break;
-              case 'showInterstitialAd':
-                _adService.showInterstitial();
-                break;
+              // case 'showInterstitialAd':
+              //   _adService.showInterstitial();
+              //   break;
               default:
                 break;
             }
           },
         ),
+      )
+      ..setPlatformNavigationDelegate(
+        PlatformNavigationDelegate(
+          const PlatformNavigationDelegateCreationParams(),
+        )..setOnUrlChange((url) {
+            var currentUrl = url.url;
+            if (currentUrl == null) return;
+
+            log("setOnUrlChange: URL is $currentUrl.");
+
+            if (currentUrl
+                .endsWith("/feedback?process=lecture&record=progress")) {
+              log("setOnUrlChange: showInterstitialAd");
+              _adService.showInterstitial();
+            }
+          }),
       );
 
     // 배너 광고 처리
