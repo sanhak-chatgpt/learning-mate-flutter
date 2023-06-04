@@ -1,11 +1,13 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:learningmate/screens/app_screen.dart';
+import 'package:learningmate/services/ad_service.dart';
 import 'package:learningmate/services/permission_service.dart';
 import 'package:learningmate/services/review_service.dart';
 
@@ -27,14 +29,25 @@ void main() async {
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
 
-  initServices();
+  await initServices();
 
   runApp(const MyApp());
 }
 
 Future<void> initServices() async {
+  final remoteConfig = FirebaseRemoteConfig.instance;
+  remoteConfig.setDefaults({
+    "ad_unit_id": "[]",
+  });
+  try {
+    await remoteConfig.fetchAndActivate();
+  } catch (e) {
+    Get.log("Remote Config 초기화 실패 - $e");
+  }
+
   Get.put(ReviewService());
   Get.put(PermissionService());
+  Get.put(AdService());
 }
 
 class MyApp extends StatelessWidget {
