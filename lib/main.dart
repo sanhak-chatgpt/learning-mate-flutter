@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -39,12 +40,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: '스터디 메이트',
-      themeMode: ThemeMode.dark,
-      theme: ThemeData(useMaterial3: true),
-      home: MyWebView(),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: '스터디 메이트',
+        themeMode: ThemeMode.dark,
+        theme: ThemeData(useMaterial3: true),
+        home: const MyWebView(),
+      ),
     );
   }
 }
@@ -103,6 +107,7 @@ class _MyWebViewState extends State<MyWebView> {
     return WillPopScope(
       onWillPop: () => _exitApp(context),
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: PlatformWebViewWidget(
             PlatformWebViewWidgetCreationParams(
