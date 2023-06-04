@@ -96,7 +96,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
       myBanner = BannerAd(
         adUnitId: adUnitId,
-        size: AdSize.banner,
+        size: AdSize.largeBanner,
         request: const AdRequest(),
         listener: BannerAdListener(
           // Called when an ad is successfully received.
@@ -127,8 +127,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Widget build(BuildContext context) {
     final Container adContainer = Container(
       alignment: Alignment.center,
-      width: AdSize.banner.width.toDouble(),
-      height: AdSize.banner.height.toDouble(),
+      width: AdSize.largeBanner.width.toDouble(),
+      height: AdSize.largeBanner.height.toDouble(),
       child: isBannerLoaded ? AdWidget(ad: myBanner!) : null,
     );
 
