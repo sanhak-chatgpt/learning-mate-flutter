@@ -44,7 +44,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("123");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: '스터디 메이트',
@@ -85,15 +84,14 @@ class _MyWebViewState extends State<MyWebView> {
         JavaScriptChannelParams(
           name: 'FlutterBridge',
           onMessageReceived: (message) {
-            log("bridge message");
-            log(message.message);
+            log("onMessageReceived: Message is ${message.message}.");
             switch (message.message) {
               case 'requestMicrophonePermission':
-                requestMicrophone();
+                _requestMicrophone();
                 break;
-              // case 'requestOpenStoreListing':
-              //   openStoreListing();
-              //   break;
+              case 'requestOpenStoreListing':
+                _openStoreListing();
+                break;
               default:
                 break;
             }
@@ -104,7 +102,6 @@ class _MyWebViewState extends State<MyWebView> {
 
   @override
   Widget build(BuildContext context) {
-    log("1231231");
     return WillPopScope(
       onWillPop: () => _exitApp(context),
       child: Scaffold(
@@ -117,44 +114,40 @@ class _MyWebViewState extends State<MyWebView> {
     );
   }
 
-  Future<void> requestMicrophone() async {
-    log("mic fun start");
-    // 마이크 권한 요청 코드 작성
-    PermissionStatus status = await Permission.microphone.request();
-
-    //권한 요청 결과에 따라 front에 message를 보냄
-    log(status.name);
-    if (status == PermissionStatus.granted) {
-      _controller.runJavaScript(
-          'MicrophonePermissionBridge.receiveMessage(\'GRANTED\')');
-    } else {
-      _controller.runJavaScript(
-          'MicrophonePermissionBridge.receiveMessage(\'DENIED\')');
-    }
-  }
-
-  Future<void> openStoreListing() async {
-    // Flutter 앱에서 openStoreListing을 호출하는 로직을 작성하세요
-    final InAppReview inAppReview = InAppReview.instance;
-
-    if (await inAppReview.isAvailable()) {
-      InAppReview.instance.openStoreListing(appStoreId: '6449399069');
-      _controller
-          .runJavaScript('OpenStoreListBridge.receiveMessage(\'GRANTED\')');
-    } else {
-      // In-App Review가 사용 불가능한 경우 처리할 로직 작성
-      _controller
-          .runJavaScript('OpenStoreListBridge.receiveMessage(\'DENIED\')');
-    }
-    //InAppReview.instance.openStoreListing(appStoreId: '1662203668');
-  }
-
+  /// 뒤로 가기 버튼 처리
   Future<bool> _exitApp(BuildContext context) async {
     if (await _controller.canGoBack()) {
       _controller.goBack();
-      return Future.value(false);
+      return false;
     } else {
-      return Future.value(true);
+      return true;
+    }
+  }
+
+  /// 마이크 권한 요청
+  Future<void> _requestMicrophone() async {
+    log("requestMicrophone: Requesting mic permission...");
+    PermissionStatus status = await Permission.microphone.request();
+    log("requestMicrophone: Permission status is $status.");
+
+    // 권한 요청 결과에 따라 JavaScript 코드 실행
+    if (status == PermissionStatus.granted) {
+      _controller.runJavaScript(
+          "MicrophonePermissionBridge.receiveMessage('GRANTED')");
+    } else {
+      _controller
+          .runJavaScript("MicrophonePermissionBridge.receiveMessage('DENIED')");
+    }
+  }
+
+  /// 스토어 평가 팝업 열기
+  Future<void> _openStoreListing() async {
+    final InAppReview inAppReview = InAppReview.instance;
+
+    log("openStoreListing: Checking if in-app review is available...");
+    if (await inAppReview.isAvailable()) {
+      log("openStoreListing: In-app review is available. Opening store listing...");
+      InAppReview.instance.openStoreListing(appStoreId: '6449399069');
     }
   }
 }
