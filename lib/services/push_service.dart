@@ -7,14 +7,11 @@ import 'package:get/get.dart';
 // https://dalgonakit.tistory.com/120
 class PushService extends GetxController {
   Future requestPermission() async {
-    if (Platform.isIOS) {
-      await FirebaseMessaging.instance.requestPermission();
-    }
+    await FirebaseMessaging.instance.requestPermission();
   }
 
   Future subscribeTopic() async {
     try {
-      await FirebaseMessaging.instance.getToken();
       await FirebaseMessaging.instance.subscribeToTopic("learningmate_all");
     } catch (e) {
       // 인터넷 연결에 실패하는 경우 예외 발생
