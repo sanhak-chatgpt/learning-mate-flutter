@@ -105,56 +105,56 @@ class _WebViewScreenState extends State<WebViewScreen> {
       );
 
     // 배너 광고 처리
-    (() async {
-      // isAttAsked 셋팅될 때까지 대기, 1초 간격 폴링.
-
-      if (myBanner != null) return;
-
-      while (true) {
-        if (_adService.availableForAskingBannerUnitId) break;
-        await Future.delayed(const Duration(milliseconds: 100));
-      }
-
-      var adUnitId = await _adService.getBannerAdUnitId();
-      if (adUnitId == null) return;
-
-      myBanner = BannerAd(
-        adUnitId: adUnitId,
-        size: AdSize.largeBanner,
-        request: const AdRequest(),
-        listener: BannerAdListener(
-          // Called when an ad is successfully received.
-          onAdLoaded: (Ad ad) {
-            if (!isBannerLoaded) {
-              setState(() {
-                isBannerLoaded = true;
-              });
-            }
-          },
-          // Called when an ad request failed.
-          onAdFailedToLoad: (Ad ad, LoadAdError error) {
-            // Dispose the ad here to free resources.
-            ad.dispose();
-          },
-          // Called when an ad opens an overlay that covers the screen.
-          onAdOpened: (Ad ad) => {},
-          // Called when an ad removes an overlay that covers the screen.
-          onAdClosed: (Ad ad) => {},
-          // Called when an impression occurs on the ad.
-          onAdImpression: (Ad ad) => {},
-        ),
-      )..load();
-    })();
+    // (() async {
+    //   // isAttAsked 셋팅될 때까지 대기, 1초 간격 폴링.
+    //
+    //   if (myBanner != null) return;
+    //
+    //   while (true) {
+    //     if (_adService.availableForAskingBannerUnitId) break;
+    //     await Future.delayed(const Duration(milliseconds: 100));
+    //   }
+    //
+    //   var adUnitId = await _adService.getBannerAdUnitId();
+    //   if (adUnitId == null) return;
+    //
+    //   myBanner = BannerAd(
+    //     adUnitId: adUnitId,
+    //     size: AdSize.largeBanner,
+    //     request: const AdRequest(),
+    //     listener: BannerAdListener(
+    //       // Called when an ad is successfully received.
+    //       onAdLoaded: (Ad ad) {
+    //         if (!isBannerLoaded) {
+    //           setState(() {
+    //             isBannerLoaded = true;
+    //           });
+    //         }
+    //       },
+    //       // Called when an ad request failed.
+    //       onAdFailedToLoad: (Ad ad, LoadAdError error) {
+    //         // Dispose the ad here to free resources.
+    //         ad.dispose();
+    //       },
+    //       // Called when an ad opens an overlay that covers the screen.
+    //       onAdOpened: (Ad ad) => {},
+    //       // Called when an ad removes an overlay that covers the screen.
+    //       onAdClosed: (Ad ad) => {},
+    //       // Called when an impression occurs on the ad.
+    //       onAdImpression: (Ad ad) => {},
+    //     ),
+    //   )..load();
+    // })();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Container adContainer = Container(
-      alignment: Alignment.center,
-      width: AdSize.largeBanner.width.toDouble(),
-      height: AdSize.largeBanner.height.toDouble(),
-      child: isBannerLoaded ? AdWidget(ad: myBanner!) : null,
-    );
+    // final Container adContainer = Container(
+    //   alignment: Alignment.center,
+    //   width: AdSize.largeBanner.width.toDouble(),
+    //   height: AdSize.largeBanner.height.toDouble(),
+    //   child: isBannerLoaded ? AdWidget(ad: myBanner!) : null,
+    // );
 
     return WillPopScope(
       onWillPop: () => _exitApp(context),
@@ -163,7 +163,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         body: SafeArea(
           child: Column(
             children: [
-              adContainer,
+              // adContainer,
               Expanded(
                 child: PlatformWebViewWidget(
                   PlatformWebViewWidgetCreationParams(
