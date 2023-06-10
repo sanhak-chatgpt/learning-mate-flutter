@@ -28,6 +28,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   final _reviewService = Get.find<ReviewService>();
   final _permissionService = Get.find<PermissionService>();
   final _adService = Get.find<AdService>();
+  String? _prevUrl;
 
   @override
   void initState() {
@@ -88,11 +89,18 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
             log("setOnUrlChange: URL is $currentUrl.");
 
-            if (currentUrl
-                .endsWith("/feedback?process=lecture&record=progress")) {
+            if (currentUrl ==
+                "https://www.thelearningmate.com/feedback?process=lecture&record=progress") {
               log("setOnUrlChange: showInterstitialAd");
               _adService.showInterstitial();
+            } else if (_prevUrl ==
+                    "https://www.thelearningmate.com/feedback?process=lecture&record=success" &&
+                currentUrl == "https://www.thelearningmate.com/") {
+              log("setOnUrlChange: requestReview");
+              _reviewService.requestReview();
             }
+
+            _prevUrl = currentUrl;
           }),
       );
 
